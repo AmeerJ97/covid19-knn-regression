@@ -1,46 +1,87 @@
-# Analyzing-COVID-19-Search-Trends-and-Hospitalizations
+# Analyzing COVID-19 Search Trends and Hospitalizations
 
-## Introduction
-The objective of the project was to explore different supervised and unsupervised learning frameworks for two COVID-19
-related datasets, to tackle real-world datasets. The frst dataset consists of aggregated, anonymous Google search trends
-for the United States. This dataset contains various symptom counts respective of each state. The second dataset consists
-of aggregate public COVID-19 hospitalizations, cases, deaths, and other attributes. The unsupervised learning models
-explored in this report are Principal Component Analysis and K-Means clustering to visualize and further understand the
-data. The supervised learning frameworks explored are K-nearest-neighbours regression and Decision Trees regression.
-The goal is to train these models to predict hospitalization cases given the search trends data. In our results we have
-KNN and Decision Tree models that achieve 5-fold-cross-validation errors of 0.0057 & 0.0133 respectively.
+Course project for **McGill COMP 551: Applied Machine Learning — Mini-Project 1, Group 53, Fall 2020**
 
-## Tasks/Sections
- - Task 1: Clean & Pre-process Data:
-      * The Processing of the Data involves removing zero or NaN 'Missing' entries or data, normalization, resolution shifting, and mean filling.
- - Task 2: Dataset Visualization:
-      * To visualize the Data we view the evolution of the symptoms over time for each region. We then perform Principal component reduction analysis (PCA). Finally we deploy K-Means to cluster the data. 
-- Task 3: Supervised Learning:
-      * The supervised learning task consists of training a regression K-Nearest-Neighbours & regression Decision Tree algorithms. Furthermore, we analyze the performance of our models.
-- For more detail, please find the report in the repository.
+- Alexandre Martini Santos (260798352)
+- Ameer Ibrahim Osman (260682723)
+- Iyatan Atchoro (26065932)
 
-## Calling Convention:
-### Examples: 
-loader = Loader()  
-dataset_ready = loader.get_merged_datasets()  
-loader.print_basic_stats()  
-loader.run_knn_crossval()  
-loader.run_decision_tree_crossval()  
-loader.run_knn_by_date()  
-loader.run_decision_tree_by_date()  
-loader.run_pca()  
-loader.run_Kmeans(k = 5, kmax = 10)  
-loader.plotAllRegionsForComparison(['Hawaii','Montana','Idaho','Maine','Wyoming'])  
+## Overview
 
-## Main Methods:
-  - The main class is our 'Loader()' class which includes all the methods deployed. Methods in this class include:
-      * get_merged_datasets: Performs pre-processing on the two datasets and merges them to be ready for use.
-      * plotAllRegionsForComparison: Plots the evolution of symptoms for specified regions over time.
-      * run_PCA: Performs the Principal component reduction.
-      * run_Kmeans : Performs K-Means clustering.
-      * run_decision_tree_by_date & run_decision_tree_crossval: Constructs the decision tree and segments by date for 5-fold-cross-validation.
-      * run_knn_by_date & run_knn_crossval: Constructs KNN and segments by date for 5-fold-cross-validation.
+This repository implements and evaluates two regression models that predict US COVID-19 hospitalizations from Google symptom search trends. It also includes an unsupervised exploration of the search-trend data using Principal Component Analysis (PCA) and K-Means clustering. The full write-up is available in the repository report: [Report/Comp 551 Project 1 Report G53.pdf](Report/Comp%20551%20Project%201%20Report%20G53.pdf).
 
-## Libraries Utilized
-  - In our project we utilize the following Python Libraries:
-        * Sci-Kit-Learn, Numpy, Pandas, & Matplotlib.  
+## Datasets
+
+Both datasets are sourced from the [Google Research Open COVID-19 Data](https://github.com/google-research/open-covid-19-data) repository:
+
+1. **Symptom search trends (United States)** — daily relative popularity of symptom searches by region. After cleaning, the dataset contains **14,790 rows and 430 columns** (422 symptoms plus timestamps and region identifiers).
+2. **Aggregated COVID-19 statistics** — public hospitalization, case, death, test, and discharge data for multiple regions. The raw dataset has **102,912 rows and 62 columns**.
+
+The label used for supervised learning is `hospitalized_new`.
+
+## Methods
+
+### Preprocessing
+
+The preprocessing pipeline:
+
+- Removes regions with no non-zero hospitalization records.
+- Drops columns with excessive missing values (NaN threshold: 95%).
+- Collapses the daily search-trend data to weekly resolution.
+- Merges search-trend and hospitalization data by region and date, keeping only the overlapping window **2020/03/02 to 2020/09/08**.
+- Z-normalizes and Min-Max normalizes features, then fills remaining NaN values with the symptom-wise mean.
+
+### Unsupervised Learning
+
+- **PCA**: The symptom features are reduced with PCA. **80 principal components** are required to retain 95% of the variance, producing a reduced feature matrix of shape **(434, 81)**.
+- **K-Means clustering**: Applied to the PCA-reduced data. The elbow method indicates an optimal cluster count of **K = 5**.
+
+### Supervised Learning
+
+- **K-Nearest Neighbours regression**: 5-fold cross-validation is used to select the hyperparameter. The best model uses **K = 12** and achieves a **5-fold cross-validation error of 0.0057**.
+- **Decision Tree regression**: The best cross-validated model uses a maximum of **20 features** per split and achieves a **5-fold cross-validation error of 0.0133**.
+
+## Results
+
+| Model | Best hyperparameter | 5-fold CV error |
+|-------|---------------------|-----------------|
+| KNN regression | K = 12 | **0.0057** |
+| Decision Tree regression | max features = 20 | **0.0133** |
+
+## Calling Convention
+
+The analysis is exposed through the `Loader` class in `code.ipynb`.
+
+```python
+loader = Loader()
+dataset_ready = loader.get_merged_datasets()
+loader.print_basic_stats()
+loader.run_knn_crossval()
+loader.run_decision_tree_crossval()
+loader.run_knn_by_date()
+loader.run_decision_tree_by_date()
+loader.run_pca()
+loader.run_Kmeans(k=5, kmax=10)
+loader.plotAllRegionsForComparison(['Hawaii', 'Montana', 'Idaho', 'Maine', 'Wyoming'])
+```
+
+### Main `Loader` methods
+
+- `get_merged_datasets()` — load, preprocess, and merge the two datasets.
+- `plotAllRegionsForComparison(regions)` — plot symptom evolution over time for selected regions.
+- `run_pca()` — perform Principal Component Analysis.
+- `run_Kmeans(k, kmax)` — perform K-Means clustering.
+- `run_knn_crossval()` / `run_knn_by_date()` — train and evaluate KNN regression by cross-validation and by date split.
+- `run_decision_tree_crossval()` / `run_decision_tree_by_date()` — train and evaluate Decision Tree regression by cross-validation and by date split.
+
+## Libraries
+
+- NumPy
+- Pandas
+- scikit-learn
+- Matplotlib
+- pydotplus
+
+## Report
+
+For full methodology, figures, and discussion, see [Report/Comp 551 Project 1 Report G53.pdf](Report/Comp%20551%20Project%201%20Report%20G53.pdf).
