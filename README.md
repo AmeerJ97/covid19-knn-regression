@@ -1,10 +1,6 @@
 # Analyzing COVID-19 Search Trends and Hospitalizations
 
-Course project for **McGill COMP 551: Applied Machine Learning — Mini-Project 1, Group 53, Fall 2020**
-
-- Alexandre Martini Santos (260798352)
-- Ameer Ibrahim Osman (260682723)
-- Iyatan Atchoro (26065932)
+Course project for **McGill COMP 551: Applied Machine Learning — Mini-Project 1, Group 53, Fall 2020** (3-person team)
 
 ## Overview
 
