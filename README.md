@@ -6,6 +6,10 @@ Course project for **McGill COMP 551: Applied Machine Learning — Mini-Project 
 
 This repository implements and evaluates two regression models that predict US COVID-19 hospitalizations from Google symptom search trends. It also includes an unsupervised exploration of the search-trend data using Principal Component Analysis (PCA) and K-Means clustering. The full write-up is available in the repository report: [Report/Comp 551 Project 1 Report G53.pdf](Report/Comp%20551%20Project%201%20Report%20G53.pdf).
 
+Predicting hospitalizations from what an entire country types into Google at 2 AM — 2020 was a strange time for all of us, including the data.
+
+![K-Means clusters over PCA-reduced search-trend data](kmeans-clusters.png)
+
 ## Datasets
 
 Both datasets are sourced from the [Google Research Open COVID-19 Data](https://github.com/google-research/open-covid-19-data) repository:
